@@ -1,0 +1,32 @@
+name: Deploy Financial Pipeline
+on:
+  push:
+    branches:
+      - 'main'
+
+env:
+  PROJECT_ID: cartola-360814
+  REGION: us-east1
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    needs: [docker_registry]
+    defaults:
+      run:
+        shell: bash
+        working-directory: terraform
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - id: "Auth"
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.SERVICE_ACCOUNT_KEY }}"
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform apply
+        run: terraform apply -auto-approve -input=false

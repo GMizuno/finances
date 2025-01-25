@@ -1,0 +1,7 @@
+*.pyc
+__pycache__/
+*.log
+.env
+poetry.lock
+tests/
+terraform/
