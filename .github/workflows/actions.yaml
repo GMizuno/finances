@@ -23,6 +23,8 @@ jobs:
         uses: "google-github-actions/auth@v1"
         with:
           credentials_json: "${{ secrets.SERVICE_ACCOUNT_KEY }}"
+      - name: Test Auth
+        run:  gcloud projects list
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
       - name: Terraform Init

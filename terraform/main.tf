@@ -27,7 +27,6 @@ locals {
   config = jsondecode(data.local_file.config.content)
 }
 
-
 resource "google_storage_bucket_object" "source_zip" {
   source       = data.archive_file.source.output_path
   content_type = "application/zip"
