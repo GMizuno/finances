@@ -60,15 +60,6 @@ resource "google_cloudfunctions2_function" "cloud_functions" {
 
 }
 
-resource "google_project_iam_binding" "cloud_function_invoker" {
-  role = "roles/cloudfunctions.invoker"
-  members = [
-    "serviceAccount:${var.service_account}",
-    "serviceAccount:cartola-projeto-python@cartola-360814.iam.gserviceaccount.com",
-  ]
-  project = var.project_id
-}
-
 resource "google_cloud_scheduler_job" "invoke_cloud_function" {
   name        = "invoke-function-finance"
   description = "Schedule the HTTPS trigger for cloud function"
@@ -89,6 +80,15 @@ resource "google_cloud_scheduler_job" "invoke_cloud_function" {
       service_account_email = var.service_account
     }
   }
+}
+
+resource "google_project_iam_binding" "cloud_function_invoker" {
+  role = "roles/cloudfunctions.invoker"
+  members = [
+    "serviceAccount:${var.service_account}",
+    "serviceAccount:cartola-projeto-python@cartola-360814.iam.gserviceaccount.com",
+  ]
+  project = var.project_id
 }
 
 
