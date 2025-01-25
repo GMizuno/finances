@@ -21,5 +21,6 @@ variable "service_account" {
 
 
 variable "config_file_path" {
+  type = string
   default = "config.json"
 }
