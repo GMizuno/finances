@@ -4,6 +4,8 @@ import pendulum
 import pandas as pd
 from pandas_gbq import to_gbq, read_gbq
 
+from discord import parser_fail_msg, parser_sucess_msg, send_discord
+
 TABLE = "finances.finance_raw"
 PROJECT = "cartola-360814"
 
@@ -64,7 +66,12 @@ def main(request):
                 if_exists="append"
             )
         except Exception as e:
+            msg = parser_fail_msg(str(e), ticket)
+            send_discord(msg)
             raise ValueError(f'Erro ao inserir na tabela {TABLE}.\n{e}')
+
+    msg = parser_sucess_msg(tickets, start, end)
+    send_discord(msg)
     return ""
 
 # if __name__ == "__main__":
