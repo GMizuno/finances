@@ -6,7 +6,7 @@ authors = ["Gabriel Mizuno <gabrielmizuno@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.10.5"
 yfinance = "^0.2.52"
 functions-framework = "^3.8.2"
 pendulum = "^3.0.0"
