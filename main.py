@@ -41,8 +41,8 @@ def main(request):
     print(f'Extraindo dados dos seguintes ativos {tickets}')
 
     if start is None:
-        start = pendulum.today().subtract(days=2).to_date_string()
-        end = pendulum.today().to_date_string()
+        start = pendulum.today().subtract(days=1).to_date_string()
+        end = pendulum.tomorrow().to_date_string()
 
     for ticket in tickets:
         print(f'Extraindo {ticket}')
