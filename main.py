@@ -1,26 +1,14 @@
 import functions_framework
-import yfinance as yf
 import pendulum
-import pandas as pd
 from pandas_gbq import to_gbq, read_gbq
 
-from discord import parser_fail_msg, parser_sucess_msg, send_discord
+from bigquery.bigquery import transform_data
+from message.discord import parser_fail_msg, parser_sucess_msg, send_discord
+from util.requester import get_data
 
 TABLE = "finances.finance_raw"
 PROJECT = "cartola-360814"
 
-def get_data(ticket: str, start: str, end: str) -> 'pd.DataFrame':
-    return yf.Ticker(ticket).history(start=start, end=end).reset_index()
-
-def select_columns(data: 'pd.DataFrame', columns: list[str]):
-    return data[columns]
-
-def transform_data(data: 'pd.DataFrame', ticket: str) -> 'pd.DataFrame':
-    data = select_columns(data, ['Date', 'Open', 'Close'])
-    data.loc[:, 'Date'] = pd.to_datetime(data['Date']).dt.strftime('%Y-%m-%d')
-
-    data.loc[:, 'Ticket'] = ticket
-    return data
 
 def delete_row_based_date_and_ticket(table: str, start_date: str, end_date: str, ticket:str, project: str = PROJECT):
     query = f"""
@@ -77,4 +65,4 @@ def main(request):
 # if __name__ == "__main__":
 #     from mock import mock_request
 #     main(mock_request)
-#
+
