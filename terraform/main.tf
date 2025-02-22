@@ -63,7 +63,7 @@ resource "google_cloudfunctions2_function" "cloud_functions" {
 resource "google_cloud_scheduler_job" "invoke_cloud_function" {
   name        = "invoke-function-finance"
   description = "Schedule the HTTPS trigger for cloud function"
-  schedule    = "0 19 * * *"
+  schedule    = "0 19 * * 1-5"
   time_zone   = "America/Sao_Paulo"
   project     = google_cloudfunctions2_function.cloud_functions.project
   region      = google_cloudfunctions2_function.cloud_functions.location
