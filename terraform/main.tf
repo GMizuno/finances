@@ -18,6 +18,8 @@ data "archive_file" "source" {
       ".git",
       ".github",
       ".gitignore",
+      "*.json",
+      "README.md"
     ])
   )
 }
