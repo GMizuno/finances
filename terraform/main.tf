@@ -14,7 +14,10 @@ data "archive_file" "source" {
       ".idea", # Exclui a pasta .idea fora do diretório terraform
       ".gcloudignore", # Exclui o arquivo .gcloudignore fora do diretório terraform
       "poetry.lock",
-      "pyproject.toml"
+      "pyproject.toml",
+      ".git",
+      ".github",
+      ".gitignore",
     ])
   )
 }
