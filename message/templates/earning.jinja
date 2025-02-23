@@ -1,0 +1,7 @@
+{% for financial_result in financials_result %}
+{% if financial_result.earning > 0 -%}
+**Ticket {{ financial_result.ticket }}** ( {{ financial_result.date }} ): {{ "{:.2f}%".format(financial_result.earning) }} 🟢
+{% else -%}
+**Ticket {{ financial_result.ticket }}** ( {{ financial_result.date }} ): {{ "{:.2f}%".format(financial_result.earning) }} 🔴
+{% endif -%}
+{% endfor %}

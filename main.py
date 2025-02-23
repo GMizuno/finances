@@ -1,23 +1,15 @@
 import functions_framework
 import pendulum
-from pandas_gbq import to_gbq, read_gbq
+from pandas_gbq import to_gbq
 
-from bigquery.bigquery import transform_data
+from bigquery.bigquery import delete_row_based_date_and_ticket
+from util.transformation import transform_data
 from message.discord import parser_fail_msg, parser_sucess_msg, send_discord
 from util.requester import get_data
 
 TABLE = "finances.finance_raw"
 PROJECT = "cartola-360814"
 
-
-def delete_row_based_date_and_ticket(table: str, start_date: str, end_date: str, ticket:str, project: str = PROJECT):
-    query = f"""
-    DELETE
-    FROM `{table}`
-    WHERE `Date` BETWEEN "{start_date}" AND "{end_date}" AND Ticket = "{ticket}"
-    """
-    print(f'Running query {query}')
-    read_gbq(query, project_id=project)
 
 @functions_framework.http
 def main(request):
@@ -37,11 +29,13 @@ def main(request):
         try:
             print(f'Extracting data from {start} to {end}')
             data = get_data(ticket, start, end)
+
         except Exception as e:
             raise ValueError(f"Error ao extrair dados.\n{e}")
 
         try:
             data = transform_data(data, ticket)
+            # TODO - Criar estrutura de msg
         except Exception as e:
             raise ValueError(f"Error ao tratar dados.\n{e}")
 
@@ -59,6 +53,7 @@ def main(request):
             raise ValueError(f'Erro ao inserir na tabela {TABLE}.\n{e}')
 
     msg = parser_sucess_msg(tickets, start, end)
+    send_discord(msg)
     send_discord(msg)
     return ""
 

@@ -1,13 +1,13 @@
-import pandas as pd
+from pandas_gbq import read_gbq
+
+from main import PROJECT
 
 
-def select_columns(data: 'pd.DataFrame', columns: list[str]):
-    return data[columns]
-
-
-def transform_data(data: 'pd.DataFrame', ticket: str) -> 'pd.DataFrame':
-    data = select_columns(data, ['Date', 'Open', 'Close'])
-    data.loc[:, 'Date'] = pd.to_datetime(data['Date']).dt.strftime('%Y-%m-%d')
-
-    data.loc[:, 'Ticket'] = ticket
-    return data
+def delete_row_based_date_and_ticket(table: str, start_date: str, end_date: str, ticket:str, project: str = PROJECT):
+    query = f"""
+    DELETE
+    FROM `{table}`
+    WHERE `Date` BETWEEN "{start_date}" AND "{end_date}" AND Ticket = "{ticket}"
+    """
+    print(f'Running query {query}')
+    read_gbq(query, project_id=project)
