@@ -2,8 +2,9 @@ import functions_framework
 import pendulum
 from pandas_gbq import to_gbq
 
-from bigquery.bigquery import delete_row_based_date_and_ticket
-from util.transformation import transform_data
+from bigquery import delete_row_based_date_and_ticket
+from message.render_jinja import daily_earning
+from util.transformation import get_daily_return, transform_data
 from message.discord import parser_fail_msg, parser_sucess_msg, send_discord
 from util.requester import get_data
 
@@ -17,6 +18,8 @@ def main(request):
     tickets = request_json.get('tickets')
     start = request_json.get('start')
     end = request_json.get('end')
+
+    daily_return_portifolio = []
 
     print(f'Extraindo dados dos seguintes ativos {tickets}')
 
@@ -35,12 +38,14 @@ def main(request):
 
         try:
             data = transform_data(data, ticket)
-            # TODO - Criar estrutura de msg
+            daily_return_ticket = get_daily_return(data)
+            daily_return_portifolio += daily_return_ticket
         except Exception as e:
             raise ValueError(f"Error ao tratar dados.\n{e}")
 
         try:
-            delete_row_based_date_and_ticket(TABLE, start, end, ticket)
+            data = data.drop(['Percent_Change'], axis=1)
+            delete_row_based_date_and_ticket(TABLE, start, end, ticket, PROJECT)
             to_gbq(
                 data,
                 destination_table=TABLE,
@@ -53,8 +58,10 @@ def main(request):
             raise ValueError(f'Erro ao inserir na tabela {TABLE}.\n{e}')
 
     msg = parser_sucess_msg(tickets, start, end)
+    msg_daily_return = daily_earning(daily_return_portifolio)
+
     send_discord(msg)
-    send_discord(msg)
+    send_discord(msg_daily_return)
     return ""
 
 # if __name__ == "__main__":

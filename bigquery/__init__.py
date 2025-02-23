@@ -1,3 +1,3 @@
-from util.transformation import select_columns, transform_data
+from .bigquery import delete_row_based_date_and_ticket
 
-__ALL__ = ['select_columns', 'transform_data']
+__ALL__ = ['delete_row_based_date_and_ticket']

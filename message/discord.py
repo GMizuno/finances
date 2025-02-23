@@ -2,7 +2,7 @@ import requests
 
 URL = 'https://discord.com/api/webhooks/1332777736858505309/GLUQS9nKLw04eSFKVvkcLXQk2K6YozXuffCdRRTKmPEttk1HSiCLCNZq9KuIULYljK1p'
 
-def parser_sucess_msg(tickets: list[str], start: str, end: str):
+def parser_sucess_msg(tickets: list[str], start: str, end: str) -> str:
     return f"Tickets: {tickets}.\nStart Date: {start}.\nEnd Date: {end}"
 
 def parser_fail_msg(error: str, ticket: str):

@@ -12,4 +12,5 @@ data = yf.Ticker(ticket).history(start=start, end=end).reset_index()
 data_trans = transform_data(data, ticket)
 d = get_daily_return(data_trans)
 msg = daily_earning(d)
-send_discord(msg)
+
+d2 = d + d
