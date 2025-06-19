@@ -35,7 +35,6 @@ def main(request):
             raise ValueError(f"Error ao extrair dados.\n{e}")
 
         try:
-            data = data.drop(['Percent_Change'], axis=1)
             delete_row_based_date_and_ticket(TABLE, start, end, ticket, PROJECT)
             to_gbq(
                 data,
