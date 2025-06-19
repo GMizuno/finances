@@ -293,5 +293,6 @@ terraform.rc
 
 .DS_Store
 terraform/.terraform.lock.hcl
+.idea
 
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm+all,terraform
