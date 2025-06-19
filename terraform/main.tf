@@ -87,13 +87,4 @@ resource "google_cloud_scheduler_job" "invoke_cloud_function" {
   }
 }
 
-# resource "google_project_iam_binding" "cloud_function_invoker" {
-#   role = "roles/cloudfunctions.invoker"
-#   members = [
-#     "serviceAccount:${var.service_account}",
-#     "serviceAccount:cartola-projeto-python@cartola-360814.iam.gserviceaccount.com",
-#   ]
-#   project = var.project_id
-# }
-
 
