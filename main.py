@@ -55,7 +55,7 @@ def main(request):
             raise ValueError(f'Erro ao inserir na tabela {TABLE}.\n{e}')
 
     query = '''
-            SELECT year_month, DATE, Ticket, return_pct * 100 AS pct_change
+            SELECT year_month, DATE, Ticket, return_pct * 100 AS return_pct
             FROM `cartola-360814.finances.vw_return_mensal`
                 QUALIFY ROW_NUMBER() OVER(PARTITION BY Ticket ORDER BY DATE DESC) < 2
             ORDER BY Ticket
@@ -68,11 +68,12 @@ def main(request):
     msg_month_over_month = month_over_month(data_month_over_month.to_dict(orient='records'))
 
     send_discord(msg)
+    print('Sending message with month over the month returns')
     send_discord(msg_month_over_month)
     
     return ""
-
+#
 # if __name__ == "__main__":
 #     from mock import mock_request
 #     main(mock_request)
-
+#
