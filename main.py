@@ -59,8 +59,11 @@ def main(request):
 
     msg = parser_sucess_msg(tickets, start, end)
     msg_daily_return = daily_earning(daily_return_portifolio)
+
+    
     send_discord(msg)
     send_discord(msg_daily_return)
+    
     return ""
 
 # if __name__ == "__main__":
