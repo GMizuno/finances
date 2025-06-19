@@ -7,6 +7,7 @@ from bigquery.bigquery import run_query
 from message.render_jinja import month_over_month
 from message.discord import parser_fail_msg, parser_sucess_msg, send_discord
 from util.requester import get_data
+from util.transformation import transform_data
 
 TABLE = "finances.finance_raw"
 PROJECT = "cartola-360814"
@@ -35,7 +36,13 @@ def main(request):
             raise ValueError(f"Error ao extrair dados.\n{e}")
 
         try:
+            data = transform_data(data, ticket)
+        except Exception as e:
+            raise ValueError(f"Error ao tratar dados.\n{e}")
+
+        try:
             delete_row_based_date_and_ticket(TABLE, start, end, ticket, PROJECT)
+            data = data[['Date', 'Open', 'Close', 'Ticket']]
             to_gbq(
                 data,
                 destination_table=TABLE,
@@ -64,7 +71,7 @@ def main(request):
     send_discord(msg_month_over_month)
     
     return ""
-#
+
 # if __name__ == "__main__":
 #     from mock import mock_request
 #     main(mock_request)
