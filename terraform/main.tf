@@ -1,3 +1,8 @@
+data "google_project" "current" {
+  project_id = var.project_id  # ou use diretamente o ID do seu projeto
+}
+
+
 data "archive_file" "source" {
   type        = "zip"
   source_dir = ".."  # Referência ao diretório pai (onde estão os arquivos principais, como main.py)

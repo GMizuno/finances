@@ -10,3 +10,6 @@ output "cloud_function_name" {
   value = google_cloudfunctions2_function.cloud_functions.name
 }
 
+output "project_id_from_data" {
+  value = data.google_project.current.project_id
+}
