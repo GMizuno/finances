@@ -64,7 +64,7 @@ resource "google_cloudfunctions2_function" "cloud_functions" {
     max_instance_count    = 1
     available_memory      = "512M"
     timeout_seconds       = 60
-    service_account_email = var.service_account,
+    service_account_email = var.service_account
     environment_variables = {
       LOG_EXECUTION_ID = "true"
     }
