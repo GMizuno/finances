@@ -4,13 +4,20 @@ from pandas_gbq import to_gbq
 
 from bigquery import delete_row_based_date_and_ticket
 from bigquery.bigquery import run_query
-from message.render_jinja import month_over_month
 from message.discord import parser_fail_msg, parser_sucess_msg, send_discord
+from message.render_jinja import month_over_month
 from util.requester import get_data
 from util.transformation import transform_data
 
 TABLE = "finances.finance_raw"
 PROJECT = "cartola-360814"
+SELECT_TICKET = ["B5P211.SA", "SPXB11.SA", "IB5M11.SA", ]
+QUERY = '''
+        SELECT year_month, DATE, Ticket, return_pct * 100 AS return_pct
+        FROM `cartola-360814.finances.vw_return_mensal`
+            QUALIFY ROW_NUMBER() OVER(PARTITION BY Ticket ORDER BY DATE DESC) < 2
+        ORDER BY Ticket
+        '''
 
 
 @functions_framework.http
@@ -54,15 +61,8 @@ def main(request):
             send_discord(msg)
             raise ValueError(f'Erro ao inserir na tabela {TABLE}.\n{e}')
 
-    query = '''
-            SELECT year_month, DATE, Ticket, return_pct * 100 AS return_pct
-            FROM `cartola-360814.finances.vw_return_mensal`
-                QUALIFY ROW_NUMBER() OVER(PARTITION BY Ticket ORDER BY DATE DESC) < 2
-            ORDER BY Ticket
-            '''
-    
-    data_month_over_month =  run_query(query, PROJECT)
-    data_month_over_month = data_month_over_month[data_month_over_month["Ticket"].isin(tickets)]
+    data_month_over_month = run_query(QUERY, PROJECT)
+    data_month_over_month = data_month_over_month[data_month_over_month["Ticket"].isin(SELECT_TICKET)]
 
     msg = parser_sucess_msg(tickets, start, end)
     msg_month_over_month = month_over_month(data_month_over_month.to_dict(orient='records'))
@@ -70,10 +70,10 @@ def main(request):
     send_discord(msg)
     print('Sending message with month over the month returns')
     send_discord(msg_month_over_month)
-    
+
     return ""
-#
-# if __name__ == "__main__":
-#     from mock import mock_request
-#     main(mock_request)
-#
+
+if __name__ == "__main__":
+    from mock import mock_request
+    main(mock_request)
+
