@@ -84,7 +84,7 @@ resource "google_cloud_scheduler_job" "invoke_cloud_function" {
     }
     body = base64encode(jsonencode(local.config))
     oidc_token {
-      audience              = "https://${var.region}-${data.google_project}cloudfunctions.net/finance"
+      audience              = "https://${var.region}-${var.project_id}cloudfunctions.net/${google_cloudfunctions2_function.cloud_functions.name}"
       service_account_email = var.service_account
     }
   }
