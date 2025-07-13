@@ -3,7 +3,7 @@
 
 Shell command to test the deployment 
 ```shell
-curl -X POST https://finance-1077543354314.us-east1.run.app \
+curl -X POST https://finance-XXXXXXX.us-east1.run.app \
 -H "Authorization: bearer $(gcloud auth print-identity-token)" \
 -H "Content-Type: application/json" \
 -d '{
