@@ -1,7 +1,3 @@
-data "google_project" "current" {
-  project_id = data.google_project  # ou use diretamente o ID do seu projeto
-}
-
 data "local_file" "config" {
   filename = var.config_file_path
 }
@@ -46,7 +42,7 @@ resource "google_storage_bucket_object" "source_zip" {
 resource "google_cloudfunctions2_function" "cloud_functions" {
   name        = "finance"
   description = "Cloud-function to extract data from Yahoo Finance"
-  project     = data.google_project
+  project     = var.project_id
   location    = var.region
 
   build_config {
@@ -81,7 +77,7 @@ resource "google_cloud_scheduler_job" "invoke_cloud_function" {
   region      = google_cloudfunctions2_function.cloud_functions.location
 
   http_target {
-    uri         = "https://${var.region}-${data.google_project}.cloudfunctions.net/${google_cloudfunctions2_function.cloud_functions.name}"
+    uri         = "https://${var.region}-${var.project_id}.cloudfunctions.net/${google_cloudfunctions2_function.cloud_functions.name}"
     http_method = "POST"
     headers = {
       "Content-Type" = "application/json"

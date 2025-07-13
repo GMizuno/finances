@@ -2,6 +2,11 @@ variable "bucket_name" {
   type = string
 }
 
+variable "project_id" {
+  type = string
+  default = "cartola-360814"
+}
+
 
 variable "region" {
   type = string
