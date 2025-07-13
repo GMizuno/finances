@@ -2,11 +2,6 @@ variable "bucket_name" {
   type = string
 }
 
-variable "project_id" {
-  type = string
-  default = "cartola-360814"
-}
-
 
 variable "region" {
   type = string
@@ -23,4 +18,13 @@ variable "service_account" {
 variable "config_file_path" {
   type = string
   default = "config.json"
+}
+
+variable "cron" {
+  type = string
+}
+
+variable "time_zone" {
+  type = string
+  default = "America/Sao_Paulo"
 }

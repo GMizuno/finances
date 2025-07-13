@@ -1,7 +1,14 @@
 data "google_project" "current" {
-  project_id = var.project_id  # ou use diretamente o ID do seu projeto
+  project_id = data.google_project  # ou use diretamente o ID do seu projeto
 }
 
+data "local_file" "config" {
+  filename = var.config_file_path
+}
+
+locals {
+  config = jsondecode(data.local_file.config.content)
+}
 
 data "archive_file" "source" {
   type        = "zip"
@@ -29,14 +36,6 @@ data "archive_file" "source" {
   )
 }
 
-data "local_file" "config" {
-  filename = var.config_file_path
-}
-
-locals {
-  config = jsondecode(data.local_file.config.content)
-}
-
 resource "google_storage_bucket_object" "source_zip" {
   source       = data.archive_file.source.output_path
   content_type = "application/zip"
@@ -47,7 +46,7 @@ resource "google_storage_bucket_object" "source_zip" {
 resource "google_cloudfunctions2_function" "cloud_functions" {
   name        = "finance"
   description = "Cloud-function to extract data from Yahoo Finance"
-  project     = var.project_id
+  project     = data.google_project
   location    = var.region
 
   build_config {
@@ -65,7 +64,10 @@ resource "google_cloudfunctions2_function" "cloud_functions" {
     max_instance_count    = 1
     available_memory      = "512M"
     timeout_seconds       = 60
-    service_account_email = var.service_account
+    service_account_email = var.service_account,
+    environment_variables = {
+      LOG_EXECUTION_ID = "true"
+    }
   }
 
 }
@@ -73,20 +75,20 @@ resource "google_cloudfunctions2_function" "cloud_functions" {
 resource "google_cloud_scheduler_job" "invoke_cloud_function" {
   name        = "invoke-function-finance"
   description = "Schedule the HTTPS trigger for cloud function"
-  schedule    = "0 19 * * 1-5"
-  time_zone   = "America/Sao_Paulo"
+  schedule    = var.cron
+  time_zone   = var.time_zone
   project     = google_cloudfunctions2_function.cloud_functions.project
   region      = google_cloudfunctions2_function.cloud_functions.location
 
   http_target {
-    uri         = "https://us-east1-cartola-360814.cloudfunctions.net/finance"
+    uri         = "https://${var.region}-${data.google_project}.cloudfunctions.net/${google_cloudfunctions2_function.cloud_functions.name}"
     http_method = "POST"
     headers = {
       "Content-Type" = "application/json"
     }
     body = base64encode(jsonencode(local.config))
     oidc_token {
-      audience              = "https://us-east1-cartola-360814.cloudfunctions.net/finance"
+      audience              = "https://${var.region}-${data.google_project}cloudfunctions.net/finance"
       service_account_email = var.service_account
     }
   }
