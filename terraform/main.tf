@@ -41,7 +41,7 @@ resource "google_storage_bucket_object" "source_zip" {
 
 resource "google_cloudfunctions2_function" "cloud_functions" {
   name        = "finance"
-  description = "Cloud-function will get trigger once file is uploaded in input-${var.project_id}"
+  description = "Cloud-function to extract data from Yahoo Finance"
   project     = var.project_id
   location    = var.region
 
