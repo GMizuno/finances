@@ -39,6 +39,7 @@ resource "google_storage_bucket_object" "source_zip" {
   bucket       = var.bucket_name
 }
 
+
 resource "google_cloudfunctions2_function" "cloud_functions" {
   name        = "finance"
   description = "Cloud-function to extract data from Yahoo Finance"
@@ -46,8 +47,9 @@ resource "google_cloudfunctions2_function" "cloud_functions" {
   location    = var.region
 
   build_config {
-    runtime     = "python310"
-    entry_point = "main"
+    runtime           = "python310"
+    entry_point       = "main"
+    docker_repository = "projects/${var.project_id}/locations/${var.region}/repositories/${var.repository}"
     source {
       storage_source {
         bucket = var.bucket_name
