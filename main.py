@@ -11,7 +11,7 @@ from util.transformation import transform_data
 
 TABLE = "finances.finance_raw"
 PROJECT = "cartola-360814"
-SELECT_TICKET = ["B5P211.SA", "SPXB11.SA", "IB5M11.SA", ]
+SELECT_TICKET = ["B5P211.SA", "SPXB11.SA", "IB5M11.SA", "NCIQ",]
 QUERY = '''
         SELECT year_month, DATE, Ticket, return_pct * 100 AS return_pct
         FROM `cartola-360814.finances.vw_return_mensal`
@@ -73,7 +73,6 @@ def main(request):
 
     return ""
 
-if __name__ == "__main__":
-    from mock import mock_request
-    main(mock_request)
-
+# if __name__ == "__main__":
+#     from mock import mock_request
+#     main(mock_request)
