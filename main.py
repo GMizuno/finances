@@ -11,7 +11,7 @@ from util.transformation import transform_data
 
 TABLE = "finances.finance_raw"
 PROJECT = "cartola-360814"
-SELECT_TICKET = ["B5P211.SA", "SPXB11.SA", "IB5M11.SA", "NCIQ",]
+SELECT_TICKET = ["B5P211.SA", "SPXB11.SA", "IB5M11.SA", "NCIQ", "BIL",]
 QUERY = '''
         SELECT year_month, DATE, Ticket, return_pct * 100 AS return_pct
         FROM `cartola-360814.finances.vw_return_mensal`

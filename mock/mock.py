@@ -20,7 +20,7 @@ mock_request = create_mock_request(
     method="POST",
     path="/example",
     json={
-        "tickets": ["NCIQ", ],
+        "tickets": ["BIL", ],
         "start": '2025-01-01',
         "end": '2025-08-23',
     },
