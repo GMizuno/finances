@@ -43,7 +43,6 @@ def get_daily_return(data: "pd.DataFrame") -> list[dict]:
 def etl(ticket, start, end, table=TABLE, project_id=PROJECT) -> None:
     logger.info(f"Extraindo {ticket}")
     try:
-        logger.info(f"Extracting data from {start} to {end}")
         data = get_data(ticket, start, end)
         logger.success("Dados obtidos com sucesso da API")
 

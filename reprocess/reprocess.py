@@ -10,6 +10,8 @@ def reprocess_data(tickets, start, end):
         start = pendulum.today().subtract(days=1).to_date_string()
         end = pendulum.tomorrow().to_date_string()
 
+    logger.info(f"Extracting data from {start} to {end}")
+    
     for ticket in tickets:
         try:
             etl(ticket, start, end)

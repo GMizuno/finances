@@ -13,3 +13,5 @@ QUERY = """
             QUALIFY ROW_NUMBER() OVER(PARTITION BY Ticket ORDER BY DATE DESC) < 2
         ORDER BY Ticket
         """
+MIN_DATE = "2024-01-01"
+MAX_DATE = "2025-12-31"

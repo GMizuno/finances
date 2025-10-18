@@ -1,6 +1,8 @@
 from flask import Request
 from werkzeug.test import EnvironBuilder
 
+from util.const import MAX_DATE, MIN_DATE, SELECT_TICKET
+
 
 def create_mock_request(
     method="GET", path="/", query_string=None, data=None, json=None, headers=None
@@ -23,11 +25,9 @@ mock_request = create_mock_request(
     method="POST",
     path="/example",
     json={
-        "tickets": [
-            "BIL",
-        ],
-        "start": "2024-01-01",
-        "end": "2025-12-31",
+        "tickets":SELECT_TICKET,
+        "start": MIN_DATE,
+        "end": MAX_DATE,
     },
     headers={"Content-Type": "application/json"},
 )
