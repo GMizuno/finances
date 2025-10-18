@@ -1,4 +1,4 @@
-from venv import logger
+from loguru import logger
 
 import functions_framework
 import pendulum
@@ -8,6 +8,7 @@ from message.discord import parser_fail_msg, parser_sucess_msg, send_discord
 from message.render_jinja import month_over_month
 from util.const import PROJECT, QUERY, SELECT_TICKET, TABLE
 from util.transformation import etl
+
 
 @functions_framework.http
 def main(request):
