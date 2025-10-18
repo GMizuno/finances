@@ -48,7 +48,3 @@ def main(request):
     send_discord(msg_month_over_month)
 
     return ""
-
-if __name__ == "__main__":
-    from mock import mock_request
-    main(mock_request)
