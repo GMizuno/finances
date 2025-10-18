@@ -1,5 +1,6 @@
 import pandas as pd
 
+pd.options.mode.chained_assignment = None 
 
 def select_columns(data: 'pd.DataFrame', columns: list[str]):
     return data[columns]
@@ -21,7 +22,7 @@ def transform_data(data: 'pd.DataFrame', ticket: str) -> 'pd.DataFrame':
 
 def get_daily_return(data: 'pd.DataFrame') -> list[dict]:
     data = data[['Date', 'Ticket', 'Percent_Change']]
-    # data['Date'] = data['Date'].dt.strftime('%Y-%m-%d')
+    
     data =  data.rename(columns={"Date": "date", "Ticket": "ticket", "Percent_Change": "earning"})
     return data.to_dict('records')
 

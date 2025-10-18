@@ -7,8 +7,8 @@ def delete_row_based_date_and_ticket(table: str, start_date: str, end_date: str,
     FROM `{table}`
     WHERE `Date` BETWEEN "{start_date}" AND "{end_date}" AND Ticket = "{ticket}"
     """
-    read_gbq(query, project_id=project)
+    read_gbq(query, project_id=project, progress_bar_type=None)
 
 
 def run_query(query: str, project_id: str = 'cartola-360814'):
-    return read_gbq(query, project_id=project_id)
+    return read_gbq(query, project_id=project_id, progress_bar_type=None)
