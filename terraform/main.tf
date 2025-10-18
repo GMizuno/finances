@@ -4,6 +4,7 @@ data "local_file" "config" {
 
 locals {
   config = jsondecode(data.local_file.config.content)
+  url =  "https://${var.region}-${var.project_id}.cloudfunctions.net/${google_cloudfunctions2_function.cloud_functions.name}"
 }
 
 data "archive_file" "source" {
@@ -79,14 +80,14 @@ resource "google_cloud_scheduler_job" "invoke_cloud_function" {
   region      = google_cloudfunctions2_function.cloud_functions.location
 
   http_target {
-    uri         = "https://${var.region}-${var.project_id}.cloudfunctions.net/${google_cloudfunctions2_function.cloud_functions.name}"
+    uri         = local.url
     http_method = "POST"
     headers = {
       "Content-Type" = "application/json"
     }
     body = base64encode(jsonencode(local.config))
     oidc_token {
-      audience              = "https://${var.region}-${var.project_id}.cloudfunctions.net/${google_cloudfunctions2_function.cloud_functions.name}"
+      audience              = local.url
       service_account_email = var.service_account
     }
   }
