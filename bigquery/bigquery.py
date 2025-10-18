@@ -11,5 +11,4 @@ def delete_row_based_date_and_ticket(table: str, start_date: str, end_date: str,
 
 
 def run_query(query: str, project_id: str = 'cartola-360814'):
-    print(f'Running query {query}')
     return read_gbq(query, project_id=project_id)

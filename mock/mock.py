@@ -21,8 +21,8 @@ mock_request = create_mock_request(
     path="/example",
     json={
         "tickets": ["BIL", ],
-        "start": '2025-01-01',
-        "end": '2025-08-23',
+        "start": '2024-01-01',
+        "end": '2025-12-31',
     },
     headers={"Content-Type": "application/json"}
 )
