@@ -3,11 +3,11 @@ from loguru import logger
 import functions_framework
 import pendulum
 
-from bigquery.bigquery import run_query
-from message.discord import parser_fail_msg, parser_sucess_msg, send_discord
-from message.render_jinja import month_over_month
-from util.const import PROJECT, QUERY, SELECT_TICKET, TABLE
-from util.transformation import etl
+from src.bigquery.bigquery import run_query
+from src.message import parser_fail_msg, parser_sucess_msg, send_discord
+from src.message import month_over_month
+from src.util import PROJECT, QUERY, SELECT_TICKET, TABLE
+from src.util import etl
 
 
 @functions_framework.http

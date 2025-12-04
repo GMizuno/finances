@@ -1,7 +1,7 @@
 from flask import Request
 from werkzeug.test import EnvironBuilder
 
-from util.const import MAX_DATE, MIN_DATE, SELECT_TICKET
+from src.util.const import MAX_DATE, MIN_DATE, SELECT_TICKET
 
 
 def create_mock_request(

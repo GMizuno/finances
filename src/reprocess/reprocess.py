@@ -1,8 +1,8 @@
 import pendulum
 
-from util.const import SELECT_TICKET, TABLE
+from src.util.const import SELECT_TICKET, TABLE
 from loguru import logger
-from util.transformation import etl
+from src.util.transformation import etl
 
 
 def reprocess_data(tickets, start, end):
