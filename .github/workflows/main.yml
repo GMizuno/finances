@@ -12,7 +12,6 @@ jobs:
   ecs:
     uses: ./.github/workflows/ecs.yml
     with:
-      environment: prod
       aws-assume-role-arn: "arn:aws:iam::605771322130:role/Github_Pipe"
       aws-region: "us-east-2"
       ecr-repository: "teste_mizuno"
