@@ -20,12 +20,12 @@ jobs:
       ecs-cluster: "mizuno-cluster"
       ecs-service: "mizuno-service"
       container-name: "mizuno-container"
-  terraform:
-    uses: ./.github/workflows/terraform.yml
-    with:
-      environment: prod
-      aws-assume-role-arn: "arn:aws:iam::605771322130:role/Github_Pipe"
-      aws-region: "us-east-2"
-      aws-statefile-s3-bucket: "terraform-state-mizuno"
+#  terraform:
+#    uses: ./.github/workflows/terraform.yml
+#    with:
+#      environment: prod
+#      aws-assume-role-arn: "arn:aws:iam::605771322130:role/Github_Pipe"
+#      aws-region: "us-east-2"
+#      aws-statefile-s3-bucket: "terraform-state-mizuno"
 
 
