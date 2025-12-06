@@ -1,22 +1,38 @@
-import pendulum
-
-from src.util.const import SELECT_TICKET, TABLE
+from src.util.const import SELECT_TICKET
 from loguru import logger
-from src.util.transformation import etl
+
+from src.util.requester import get_data
 
 
 def reprocess_data(tickets, start, end):
-    if start is None:
-        start = pendulum.today().subtract(days=1).to_date_string()
-        end = pendulum.tomorrow().to_date_string()
-
-    logger.info(f"Extracting data from {start} to {end}")
-    
     for ticket in tickets:
+        data = get_data(ticket, start, end)
+        data['Date'] = data['Date'].dt.tz_convert('UTC').dt.tz_localize(None)
+        data.rename(columns={'Stock Splits': 'Stock_Splits'}, inplace=True)
+
+        required_columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Dividends']
+        missing_columns = [col for col in required_columns if col not in data.columns]
+        if missing_columns:
+            logger.error(f"Missing columns for ticket {ticket}: {missing_columns}")
+            continue
+
+        # Select required columns
+        data = data[required_columns]
+        data['Ticket'] = ticket
+
+        # Write data to Athena Iceberg
         try:
-            etl(ticket, start, end)
+            wr.athena.to_iceberg(
+                df=data,
+                database='corretagem',
+                table='stock_data',
+                temp_path='s3://finance-605771322130/temp/',
+                table_location='s3://finance-605771322130/raw/stock_data/',
+                keep_files=False,
+            )
+            logger.success(f'Finished processing {ticket}')
         except Exception as e:
-            logger.error(f"Error ao inserir na tabela {TABLE}.\n{e}")
+            logger.error(f"Athena write error for ticket {ticket}: {e}")
 
 
 if __name__ == "__main__":

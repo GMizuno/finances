@@ -1,46 +1,49 @@
-#name: "ECS"
-#on:
-#  workflow_call:
-#    inputs:
-#      aws-assume-role-arn:
-#        type: string
-#        required: true
-#      aws-region:
-#        type: string
-#        required: true
-#      ecr-repository:
-#        type: string
-#        required: true
-#        description: "Nome do repositório no ECR"
-#jobs:
-#  build-and-deploy:
-#    runs-on: ubuntu-latest
-#    environment: ${{ inputs.environment }}
-#    permissions:
-#      id-token: write
-#      contents: read
-#  steps:
-#    - name: Checkout code
-#      uses: actions/checkout@v6
-#
-#    - name: Configure AWS credentials
-#      uses: aws-actions/configure-aws-credentials@v4
-#      with:
-#        role-to-assume: ${{ inputs.aws-assume-role-arn }}
-#        role-session-name: GitHub_to_AWS_via_FederatedOIDC
-#        aws-region: ${{ inputs.aws-region }}
-#
-#    - name: Login to Amazon ECR
-#      id: login-ecr
-#      uses: aws-actions/amazon-ecr-login@v2
-#
-#    - name: Build, tag, and push image to Amazon ECR
-#      id: build-image
-#      env:
-#        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#        IMAGE_TAG: ${{ github.sha }}
-#      run: |
-#        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-#        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-#        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-#
+name: "ECS"
+on:
+  workflow_call:
+    inputs:
+      aws-assume-role-arn:
+        type: string
+        required: true
+      aws-region:
+        type: string
+        required: true
+      ecr-repository:
+        type: string
+        required: true
+        description: "Nome do repositório no ECR"
+      image_tag:
+        type: string
+        required: true
+        description: "Tag da imagem no ECR"
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.aws-assume-role-arn }}
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.image_tag }} .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.image_tag }}
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+

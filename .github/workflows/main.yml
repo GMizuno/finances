@@ -9,38 +9,21 @@ permissions:
   id-token: write
   contents: read
 
-env:
-  ECR_REPOSITORY: "teste_mizuno"
-
 jobs:
-  ecs:
-    name: 'ECS'
+  test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+      - run: echo "Rodando testes unitários..."
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: "arn:aws:iam::605771322130:role/Github_Pipe"
-          role-session-name: GitHub_to_AWS_via_FederatedOIDC
-          aws-region: us-east-2
+  deploy-ecs:
+    name: 'Deploy ECS'
+    needs: test
+    uses: ./.github/workflows/ecs.yml
+    with:
+      aws-assume-role-arn: "arn:aws:iam::605771322130:role/Github_Pipe"
+      aws-region: "us-east-2"
+      ecr-repository: "teste_mizuno"
+      image_tag: "v1.0.${{ github.run_number }}"
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
