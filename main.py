@@ -4,12 +4,10 @@ import os
 from dotenv import load_dotenv
 
 from src.message.discord import parser_sucess_msg, send_discord
-
-load_dotenv()
-
 from src.util.requester import get_data
 from src.util.log import logger
 
+load_dotenv()
 
 def main(event, context) -> str:
     logger.info(f"Starting the process with event {event} and context {context}")
