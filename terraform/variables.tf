@@ -5,7 +5,9 @@ variable "region" {
 }
 
 variable "webhook_discord" {
-  type = string
+  type        = string
+  sensitive   = true
+  description = "A URL do webhook recebida via GitHub Secrets"
 }
 
 variable "tickets" {
@@ -13,7 +15,7 @@ variable "tickets" {
 }
 
 variable "ecr_repo_url" {
-  type = string
+  type    = string
   default = "605771322130.dkr.ecr.us-east-2.amazonaws.com/teste_mizuno"
 }
 
