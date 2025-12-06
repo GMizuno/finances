@@ -21,7 +21,7 @@ jobs:
 
   terraform:
     name: 'Terraform'
-#    needs: deploy-ecs
+    needs: deploy-ecs
     uses: ./.github/workflows/terraform.yml
     with:
       aws-assume-role-arn: "arn:aws:iam::605771322130:role/Github_Pipe"
