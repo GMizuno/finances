@@ -3,6 +3,8 @@ import awswrangler as wr
 import os
 from dotenv import load_dotenv
 
+from src.message.discord import parser_sucess_msg, send_discord
+
 load_dotenv()
 
 from src.util.requester import get_data
@@ -12,12 +14,13 @@ from src.util.log import logger
 def main() -> str:
     logger.info('Starting the process')
     tickets = os.getenv('TICKETS').split(',')
+    start = '2024-01-01'  # pendulum.today().subtract(days=2).to_date_string()
+    end = '2025-12-05'  # pendulum.today().subtract(days=1).to_date_string()
 
-    logger.info(f'Extracting these {tickets}')
+    logger.info(f'Extracting these {tickets} from range {start} to {end}')
+    
     for ticket in tickets:
         logger.info(f'Processing {ticket}')
-        start = '2024-01-01'# pendulum.today().subtract(days=2).to_date_string()
-        end =  '2025-12-05'# pendulum.today().subtract(days=1).to_date_string()
 
         data = get_data(ticket, start, end)
         data['Date'] = data['Date'].dt.tz_convert('UTC').dt.tz_localize(None)
@@ -47,6 +50,12 @@ def main() -> str:
             logger.success(f'Finished processing {ticket}')
         except Exception as e:
             logger.error(f"Athena write error for ticket {ticket}: {e}")
+
+    try:
+        send_discord(parser_sucess_msg(tickets, start, end))
+    except Exception as e:
+        logger.error(f"Error on send Discord msg {tickets}: {e}")
+
 
     return ""
 
