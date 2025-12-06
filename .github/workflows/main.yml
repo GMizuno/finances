@@ -27,5 +27,5 @@ jobs:
       aws-assume-role-arn: "arn:aws:iam::605771322130:role/Github_Pipe"
       aws-region: "us-east-2"
       environment: "production"
-      image_uri: "v1.0.20"
+      image_tag: "v1.0.${{ github.run_number }}"
 
