@@ -10,14 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Rodando testes unitários..."
-
 #  deploy-ecs:
 #    name: 'Deploy ECS'
-#    needs: test
 #    uses: ./.github/workflows/ecs.yml
 #    with:
 #      aws-assume-role-arn: "arn:aws:iam::605771322130:role/Github_Pipe"
