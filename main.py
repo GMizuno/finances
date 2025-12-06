@@ -18,7 +18,6 @@ def main() -> str:
         logger.info(f'Processing {ticket}')
         start = '2024-01-01'# pendulum.today().subtract(days=2).to_date_string()
         end =  '2025-12-05'# pendulum.today().subtract(days=1).to_date_string()
-        end =  pendulum.today().subtract(days=0).to_date_string()
 
         data = get_data(ticket, start, end)
         data['Date'] = data['Date'].dt.tz_convert('UTC').dt.tz_localize(None)

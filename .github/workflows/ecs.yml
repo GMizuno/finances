@@ -16,7 +16,6 @@ on:
         type: string
         required: true
         description: "Tag da imagem no ECR"
-      # CORREÇÃO 1: Adicionado o input environment que estava sendo chamado mas não existia
       environment:
         type: string
         required: false

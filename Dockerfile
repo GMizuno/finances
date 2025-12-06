@@ -1,34 +1,35 @@
-# Use uma imagem base leve
-FROM python:3.11-slim
+FROM python:3.12 as builder
 
-# Variáveis de ambiente para evitar arquivos .pyc e logs em buffer
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    POETRY_VERSION=1.8.2
+    POETRY_VERSION=1.8.2 \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache
 
-# Instalar dependências do sistema necessárias (opcional, dependendo dos seus pacotes)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Instalar o Poetry via pip
 RUN pip install "poetry==$POETRY_VERSION"
 
-# Definir diretório de trabalho
 WORKDIR /app
 
-# Copiar apenas os arquivos de dependência primeiro (para cache do Docker)
 COPY pyproject.toml poetry.lock ./
 
-# Configurar o Poetry para NÃO criar virtualenv (instala direto no sistema do container)
 RUN poetry config virtualenvs.create false
 
-# Instalar dependências de produção (sem dev dependencies)
-RUN poetry install --no-root --only main
+RUN poetry install --no-root --only main && rm -rf $POETRY_CACHE_DIR
 
-# Copiar o restante do código da aplicação
+FROM python:3.12-slim as runtime
+
+ENV VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH"
+
+COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
+
 COPY . .
 
-# Comando de inicialização (ajuste conforme seu script ou framework, ex: FastAPI, Flask)
 CMD ["python", "main.py"]
