@@ -1,4 +1,4 @@
-name: deploy
+name: Deploy
 on:
   push:
     branches:
@@ -10,24 +10,22 @@ permissions:
   contents: read
 
 jobs:
-#  deploy-ecs:
-#    name: 'deploy ecs'
-#    uses: ./.github/workflows/ecs.yml
-#    with:
-#      aws-assume-role-arn: "arn:aws:iam::605771322130:role/github_pipe"
-#      aws-region: "us-east-2"
-#      ecr-repository: "teste_mizuno"
-#      image_tag: "v1.0.${{ github.run_number }}"
+  deploy-ecs:
+    name: 'Deploy ECS'
+    uses: ./.github/workflows/ecs.yml
+    with:
+      aws-assume-role-arn: "arn:aws:iam::605771322130:role/Github_Pipe"
+      aws-region: "us-east-2"
+      ecr-repository: "teste_mizuno"
+      image_tag: "v1.0.${{ github.run_number }}"
 
   terraform:
-    name: 'terraform'
+    name: 'Terraform'
 #    needs: deploy-ecs
     uses: ./.github/workflows/terraform.yml
     with:
-      aws-assume-role-arn: "arn:aws:iam::605771322130:role/github_pipe"
+      aws-assume-role-arn: "arn:aws:iam::605771322130:role/Github_Pipe"
       aws-region: "us-east-2"
       environment: "production"
       image_uri: "v1.0.20"
-    secrets:
-      webhook_secret: ${{ secrets.webhook_url }}
 

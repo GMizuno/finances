@@ -15,9 +15,6 @@ on:
       image_uri:
         type: string
         required: true
-    secrets:
-      webhook_secret: 
-        required: true
 
 jobs:
   terraform:
@@ -59,7 +56,7 @@ jobs:
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-plan
         env:
-          TF_VAR_webhook_discord: ${{ secrets.WEBHOOK_SECRET }}
+          TF_VAR_webhook_discord: ${{ secrets.WEBHOOK_URL }}
         run: cd terraform &&
           terraform plan -var-file="terraform.tfvars" -out="${{ inputs.environment }}.plan" -var="image_tag=${{ inputs.image_uri }}"
 
