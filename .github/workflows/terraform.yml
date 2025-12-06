@@ -58,7 +58,7 @@ jobs:
         env:
           TF_VAR_WEBHOOK_DISCORD: ${{ secrets.TF_VAR_WEBHOOK_URL }}
         run: cd terraform &&
-          terraform plan -var-file="terraform.tfvars" -out="${{ inputs.environment }}.plan" -var="image_tag=${{ inputs.image_uri }}"
+          TF_LOG=TRACE terraform plan -var-file="terraform.tfvars" -out="${{ inputs.environment }}.plan" -var="image_tag=${{ inputs.image_uri }}"
 
       - name: Terraform Apply
         if: steps.read-destroy-config.outputs.destroy != 'true'
