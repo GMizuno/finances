@@ -28,4 +28,5 @@ jobs:
       aws-region: "us-east-2"
       environment: "production"
       image_uri: "v1.0.20"
+      web_hook: ${{ secrets.WEBHOOK_URL }}
 
