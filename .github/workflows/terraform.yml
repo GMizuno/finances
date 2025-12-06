@@ -12,6 +12,9 @@ on:
       environment:
         type: string
         required: true
+      image_uri:
+        type: string
+        required: true
 
 jobs:
   terraform:
@@ -53,7 +56,7 @@ jobs:
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-plan
         run: cd terraform &&
-          terraform plan -var-file="terraform.tfvars" -out="${{ inputs.environment }}.plan" -var="container_image=${{ inputs.image_uri }}"
+          terraform plan -var-file="terraform.tfvars" -out="${{ inputs.environment }}.plan" -var="image_tag=${{ inputs.image_uri }}"
 
       - name: Terraform Apply
         if: steps.read-destroy-config.outputs.destroy != 'true'

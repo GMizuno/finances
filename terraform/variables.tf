@@ -4,16 +4,6 @@ variable "region" {
   description = "The type of EC2 instance" # Description of what this variable represents
 }
 
-variable "bucket_id" {
-  type    = string
-  default = "notas-corretagem-605771322130"
-}
-
-variable "bucket_arn" {
-  type    = string
-  default = "arn:aws:s3:::notas-corretagem-605771322130"
-}
-
 variable "webhook_discord" {
   type = string
 }
