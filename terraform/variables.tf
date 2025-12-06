@@ -6,7 +6,6 @@ variable "region" {
 
 variable "webhook_discord" {
   type        = string
-  sensitive   = true
   description = "A URL do webhook recebida via GitHub Secrets"
 }
 
