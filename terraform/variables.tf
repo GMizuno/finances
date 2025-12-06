@@ -1,7 +1,6 @@
 variable "region" {
   type        = string                     # The type of the variable, in this case a string
   default     = "us-east-2"                # Default value for the variable
-  description = "The type of EC2 instance" # Description of what this variable represents
 }
 
 variable "webhook_discord" {
