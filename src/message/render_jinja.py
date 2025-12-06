@@ -1,7 +1,9 @@
 from jinja2 import Environment, FileSystemLoader
 
 
-def jinja_render(financials_result: list[dict], template: str, repository: str="message/templates/") -> str:
+def jinja_render(
+    financials_result: list[dict], template: str, repository: str = "message/templates/"
+) -> str:
     environment = Environment(
         loader=FileSystemLoader(repository), keep_trailing_newline=False
     )

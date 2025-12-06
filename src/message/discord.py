@@ -15,4 +15,5 @@ def send_discord(msg: str, url: str):
         "avatar_url": "https://i.imgur.com/NiTuE1J.jpeg",
         "content": msg,
     }
-    requests.post(url, json=data)
+    if url != "":
+        requests.post(url, json=data)
