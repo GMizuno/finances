@@ -19,3 +19,29 @@ resource "aws_lambda_function" "lambda_stock_pricing" {
     Application = "Finace"
   }
 }
+
+resource "aws_cloudwatch_event_rule" "ocr_schedule" {
+  name        = "finance_stock_trigger"
+  description = "Dispara a lambda de OCR todo dia as 08:00 UTC"
+
+  schedule_expression = "cron(0 19 * * 1-5)"
+
+  tags = {
+    Environment = "production"
+    Application = "Finace"
+  }
+}
+
+resource "aws_cloudwatch_event_target" "check_stock_every_day" {
+  rule      = aws_cloudwatch_event_rule.ocr_schedule.name
+  target_id = "finance_stock_lambda"
+  arn       = aws_lambda_function.lambda_stock_pricing.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_call_ocr" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_stock_pricing.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.ocr_schedule.arn
+}
