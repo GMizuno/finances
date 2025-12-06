@@ -21,6 +21,10 @@ on:
         type: string
         required: false
         default: 'production'
+    outputs:
+      docker_image_uri:
+        description: "URI completa da imagem Docker"
+        value: ${{ jobs.build-and-deploy.outputs.output_image }}
 
 jobs:
   build-and-deploy:
@@ -29,11 +33,12 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    outputs:
+      output_image: ${{ steps.build-image.outputs.image }}
 
-    # CORREÇÃO 2: 'steps' agora está indentado PARA DENTRO de 'build-and-deploy'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 # Atualizado para v4 (padrão atual), mas v3/v6 ok
+        uses: actions/checkout@v4 
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -50,7 +55,6 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          # CORREÇÃO 3: Mapeando o input para uma variável de ambiente acessível no bash
           ECR_REPOSITORY: ${{ inputs.ecr-repository }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.image_tag }} .
