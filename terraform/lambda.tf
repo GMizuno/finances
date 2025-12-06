@@ -24,7 +24,7 @@ resource "aws_cloudwatch_event_rule" "ocr_schedule" {
   name        = "finance_stock_trigger"
   description = "Dispara a lambda de OCR todo dia as 08:00 UTC"
 
-  schedule_expression = "cron(0 19 * * 1-5)"
+  schedule_expression = "cron(0 22 ? * MON-FRI *)"
 
   tags = {
     Environment = "production"
