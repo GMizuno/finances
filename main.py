@@ -9,6 +9,7 @@ from src.util.log import logger
 
 load_dotenv()
 
+
 def main(event, context) -> str:
     logger.info(f"Starting the process with event {event} and context {context}")
     tickets = os.getenv("TICKETS").split(",")
@@ -63,7 +64,3 @@ def main(event, context) -> str:
         logger.error(f"Error on send Discord msg {tickets}: {e}")
 
     return ""
-
-
-if __name__ == "__main__":
-    main()
