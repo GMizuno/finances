@@ -32,4 +32,5 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 COPY . .
 
-CMD ["python", "main.py"]
+ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]
+CMD ["main.main"]

@@ -2,6 +2,7 @@ import pendulum
 import awswrangler as wr
 import os
 from dotenv import load_dotenv
+import json
 
 from src.message.discord import parser_sucess_msg, send_discord
 from src.util.requester import get_data
@@ -10,10 +11,13 @@ from src.util.log import logger
 load_dotenv()
 
 
-def main(event, context) -> str:
+def main(event, context) -> dict:
     logger.info(f"Starting the process with event {event} and context {context}")
+
     tickets = os.getenv("TICKETS").split(",")
+    # TODO: USE AWS SECRET
     webhook = os.getenv("WEBHOOK", "")
+
     start = pendulum.today().subtract(days=2).to_date_string()
     end = pendulum.today().subtract(days=1).to_date_string()
 
@@ -26,6 +30,7 @@ def main(event, context) -> str:
         data["Date"] = data["Date"].dt.tz_convert("UTC").dt.tz_localize(None)
         data.rename(columns={"Stock Splits": "Stock_Splits"}, inplace=True)
 
+        # TODO: MOVE AS CONST
         required_columns = [
             "Date",
             "Open",
@@ -40,12 +45,10 @@ def main(event, context) -> str:
             logger.error(f"Missing columns for ticket {ticket}: {missing_columns}")
             continue
 
-        # Select required columns
         data = data[required_columns]
         data["Ticket"] = ticket
-
-        # Write data to Athena Iceberg
         try:
+            # TODO: PASS AS PARAMETRE
             wr.athena.to_iceberg(
                 df=data,
                 database="corretagem",
@@ -63,4 +66,7 @@ def main(event, context) -> str:
     except Exception as e:
         logger.error(f"Error on send Discord msg {tickets}: {e}")
 
-    return ""
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Olá da Lambda!')
+    }
