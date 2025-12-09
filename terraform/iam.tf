@@ -64,7 +64,7 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
         Resource = [
           "arn:aws:glue:*:605771322130:catalog",
           "arn:aws:glue:*:605771322130:database/corretagem",
-          "arn:aws:glue:*:605771322130:table/corretagem/stock_data"
+          "arn:aws:glue:*:605771322130:table/corretagem/*"
         ]
       },
       {
