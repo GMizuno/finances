@@ -89,9 +89,9 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
           "athena:GetWorkGroup"
         ]
         Resource = [
-          "*" # Local Temporário/Staging
+          "*"
         ]
-      },
+      }
     ]
   })
 }
