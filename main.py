@@ -28,9 +28,13 @@ def main(event, context) -> dict:
     logger.info(f"Extracting these {tickets} from range {start} to {end}")
 
     for ticket in tickets:
-        logger.info(f"Processing {ticket}")
+        logger.info(f"Starting processing {ticket}")
 
         data = get_data(ticket, start, end)
+
+        logger.info(f"Extract from Yahoo Finance")
+
+
         data["Date"] = data["Date"].dt.tz_convert("UTC").dt.tz_localize(None)
         data.rename(columns={"Stock Splits": "Stock_Splits"}, inplace=True)
 
