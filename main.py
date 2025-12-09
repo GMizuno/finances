@@ -12,6 +12,7 @@ from src.util.log import logger
 load_dotenv()
 
 
+
 def main(event, context) -> dict:
     logger.info(f"Starting the process with event {event} and context {context}")
 
@@ -62,6 +63,9 @@ def main(event, context) -> dict:
         try:
             logger.info(f"Writing to Athena table {ticket}")
             # TODO: PASS AS PARAMETRE
+
+            wr.config.s3_output = "s3://athena-mizuno-study/"
+
             wr.athena.to_iceberg(
                 df=data,
                 database="corretagem",
