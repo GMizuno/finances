@@ -3,6 +3,7 @@ import awswrangler as wr
 import os
 from dotenv import load_dotenv
 import json
+import sys
 
 from src.message.discord import parser_sucess_msg, send_discord
 from src.util.requester import get_data
@@ -59,6 +60,7 @@ def main(event, context) -> dict:
         data = data[required_columns]
         data["Ticket"] = ticket
         try:
+            logger.info(f"Writing to Athena table {ticket}")
             # TODO: PASS AS PARAMETRE
             wr.athena.to_iceberg(
                 df=data,
@@ -71,6 +73,7 @@ def main(event, context) -> dict:
             logger.success(f"Finished processing {ticket}")
         except Exception as e:
             logger.error(f"Athena write error for ticket {ticket}: {e}")
+            sys.exit(1)
 
     try:
         send_discord(parser_sucess_msg(tickets, start, end), webhook)
