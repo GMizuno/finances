@@ -51,7 +51,6 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
           "arn:aws:s3:::finance-605771322130/temp/*"       # Local Temporário/Staging
         ]
       },
-
       {
         Sid    = "GlueCatalogAccess"
         Effect = "Allow"
@@ -68,7 +67,6 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
           "arn:aws:glue:*:605771322130:table/corretagem/stock_data"
         ]
       },
-      
       {
         Sid    = "AthenaExecution"
         Effect = "Allow"
@@ -83,7 +81,7 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
         ]
       },
       {
-        Sid    = "S3Access"
+        Sid    = "AthenaGroup"
         Effect = "Allow"
         Action = [
           "athena:GetWorkGroup"
