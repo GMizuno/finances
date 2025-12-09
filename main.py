@@ -15,11 +15,15 @@ def main(event, context) -> dict:
     logger.info(f"Starting the process with event {event} and context {context}")
 
     tickets = os.getenv("TICKETS").split(",")
+    start = os.getenv("START", None)
+    end = os.getenv("END", None)
     # TODO: USE AWS SECRET
     webhook = os.getenv("WEBHOOK", "")
 
-    start = pendulum.today().subtract(days=2).to_date_string()
-    end = pendulum.today().subtract(days=1).to_date_string()
+    if start is not None and end is not None:
+        logger.info(f"Using custom range {start} to {end}")
+        start = pendulum.today().subtract(days=30).to_date_string()
+        end = pendulum.today().subtract(days=0).to_date_string()
 
     logger.info(f"Extracting these {tickets} from range {start} to {end}")
 
