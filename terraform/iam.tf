@@ -47,8 +47,7 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
         ]
         Resource = [
           "arn:aws:s3:::finance-605771322130",             # O Bucket em si
-          "arn:aws:s3:::finance-605771322130/raw/stock_data/*", # Local da Tabela
-          "arn:aws:s3:::finance-605771322130/temp/*"       # Local Temporário/Staging
+          "arn:aws:s3:::finance-605771322130/*"       # Local Temporário/Staging
         ]
       },
       {
@@ -65,19 +64,6 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
           "arn:aws:glue:*:605771322130:catalog",
           "arn:aws:glue:*:605771322130:database/corretagem",
           "arn:aws:glue:*:605771322130:table/corretagem/*"
-        ]
-      },
-      {
-        Sid    = "AthenaExecution"
-        Effect = "Allow"
-        Action = [
-          "athena:StartQueryExecution",
-          "athena:GetQueryExecution",
-          "athena:GetQueryResults",
-          "athena:StopQueryExecution"
-        ]
-        Resource = [
-          "arn:aws:athena:*:605771322130:workgroup/primary"
         ]
       },
       {
