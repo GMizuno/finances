@@ -73,7 +73,6 @@ def main(event, context) -> dict:
                 temp_path="s3://finance-605771322130/temp/",
                 table_location="s3://finance-605771322130/raw/stock_data/",
                 keep_files=False,
-                workgroup="finance_etl",
             )
             logger.success(f"Finished processing {ticket}")
         except Exception as e:
