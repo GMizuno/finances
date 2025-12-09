@@ -70,7 +70,8 @@ def main(event, context) -> dict:
     except Exception as e:
         logger.error(f"Error on send Discord msg {tickets}: {e}")
 
+    logger.success("Finished processing all tickets.")
     return {
         'statusCode': 200,
-        'body': json.dumps('Olá da Lambda!')
+        'body': json.dumps("Finished processing all tickets.")
     }
