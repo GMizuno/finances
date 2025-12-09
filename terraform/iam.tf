@@ -46,8 +46,8 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
           "s3:GetBucketLocation"
         ]
         Resource = [
-          "arn:aws:s3:::finance-605771322130",             # O Bucket em si
-          "arn:aws:s3:::finance-605771322130/*"       # Local Temporário/Staging
+          "arn:aws:s3:::finance-605771322130",  # O Bucket em si
+          "arn:aws:s3:::finance-605771322130/*" # Local Temporário/Staging
         ]
       },
       {
@@ -67,16 +67,34 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
         ]
       },
       {
-            "Sid": "AthenaAccess",
-            "Effect": "Allow",
-            "Action": [
-                "athena:StartQueryExecution",
-                "athena:GetQueryExecution",
-                "athena:GetQueryResults",
-                "athena:GetWorkGroup"
-            ],
-            "Resource": "*"
-        }
+        "Sid" : "AthenaAccess",
+        "Effect" : "Allow",
+        "Action" : [
+          "athena:StartQueryExecution",
+          "athena:GetQueryExecution",
+          "athena:GetQueryResults",
+          "athena:GetWorkGroup"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Sid" : "S3AthenaResults",
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:GetBucketLocation",
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:ListBucketMultipartUploads",
+          "s3:ListMultipartUploadParts",
+          "s3:AbortMultipartUpload",
+          "s3:CreateBucket",
+          "s3:PutObject"
+        ],
+        "Resource" : [
+          "arn:aws:s3:::finance-605771322130",
+          "arn:aws:s3:::finance-605771322130/athena-results/*"
+        ]
+      }
     ]
   })
 }
