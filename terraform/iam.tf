@@ -82,6 +82,16 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
           "arn:aws:athena:*:605771322130:workgroup/primary"
         ]
       },
+      {
+        Sid    = "S3Access"
+        Effect = "Allow"
+        Action = [
+          "athena:GetWorkGroup"
+        ]
+        Resource = [
+          "*" # Local Temporário/Staging
+        ]
+      },
     ]
   })
 }
