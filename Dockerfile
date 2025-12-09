@@ -18,5 +18,7 @@ RUN poetry config virtualenvs.create false && \
 # 4. Copiar o código da função
 COPY main.py ${LAMBDA_TASK_ROOT}
 
+COPY src ${LAMBDA_TASK_ROOT}/src
+
 # 5. Definir o CMD para o manipulador da função (handler)
 CMD [ "main.main" ]
