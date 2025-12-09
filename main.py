@@ -32,11 +32,12 @@ def main(event, context) -> dict:
 
         data = get_data(ticket, start, end)
 
-        logger.info(f"Extract from Yahoo Finance")
-
+        logger.success(f"Extract from Yahoo Finance")
 
         data["Date"] = data["Date"].dt.tz_convert("UTC").dt.tz_localize(None)
         data.rename(columns={"Stock Splits": "Stock_Splits"}, inplace=True)
+
+        logger.success(f"Cleaning columns")
 
         # TODO: MOVE AS CONST
         required_columns = [
@@ -49,6 +50,8 @@ def main(event, context) -> dict:
             "Dividends",
         ]
         missing_columns = [col for col in required_columns if col not in data.columns]
+
+        logger.info(f"Selected columns: {required_columns}")
         if missing_columns:
             logger.error(f"Missing columns for ticket {ticket}: {missing_columns}")
             continue
