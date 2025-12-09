@@ -47,16 +47,3 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_ocr" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.ocr_schedule.arn
 }
-
-resource "aws_athena_workgroup" "etl_workgroup" {
-  name = "finance_etl"
-
-  configuration {
-    enforce_workgroup_configuration    = true
-    publish_cloudwatch_metrics_enabled = true
-
-    result_configuration {
-      output_location = "s3://finance-605771322130/athena-results/"
-    }
-  }
-}

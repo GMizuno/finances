@@ -91,8 +91,8 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
           "s3:PutObject"
         ],
         "Resource" : [
-          "arn:aws:s3:::finance-605771322130",
-          "arn:aws:s3:::finance-605771322130/athena-results/*"
+          "arn:aws:s3:::athena-mizuno-study",
+          "arn:aws:s3:::athena-mizuno-study/*"
         ]
       }
     ]
