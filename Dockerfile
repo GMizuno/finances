@@ -16,7 +16,7 @@ RUN poetry config virtualenvs.create false && \
     poetry install --no-interaction --no-ansi --only main --no-root
 
 # 4. Copiar o código da função
-COPY app.py ${LAMBDA_TASK_ROOT}
+COPY main.py ${LAMBDA_TASK_ROOT}
 
 # 5. Definir o CMD para o manipulador da função (handler)
-CMD [ "app.handler" ]
+CMD [ "main.main" ]
