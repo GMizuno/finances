@@ -81,15 +81,16 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
         ]
       },
       {
-        Sid    = "AthenaGroup"
-        Effect = "Allow"
-        Action = [
-          "athena:GetWorkGroup"
-        ]
-        Resource = [
-          "*"
-        ]
-      }
+            "Sid": "AthenaAccess",
+            "Effect": "Allow",
+            "Action": [
+                "athena:StartQueryExecution",
+                "athena:GetQueryExecution",
+                "athena:GetQueryResults",
+                "athena:GetWorkGroup"
+            ],
+            "Resource": "*"
+        }
     ]
   })
 }
