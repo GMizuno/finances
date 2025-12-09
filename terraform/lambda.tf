@@ -25,7 +25,7 @@ resource "aws_cloudwatch_event_rule" "ocr_schedule" {
   name        = "finance_stock_trigger"
   description = "Dispara a lambda de ${aws_lambda_function.lambda_stock_pricing.function_name} todo dia as 08:00 UTC"
 
-  schedule_expression = "cron(45 00 ? * MON-FRI *)"
+  schedule_expression = "cron(0 22 ? * MON-FRI *)"
 
   tags = {
     Environment = "PRD"
