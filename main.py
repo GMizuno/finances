@@ -8,6 +8,7 @@ import sys
 from src.message.discord import parser_sucess_msg, send_discord
 from src.util.requester import get_data
 from src.util.log import logger
+from src.util.secret import get_secret
 
 load_dotenv()
 
@@ -19,8 +20,7 @@ def main(event, context) -> dict:
     tickets = os.getenv("TICKETS").split(",")
     start = os.getenv("START", None)
     end = os.getenv("END", None)
-    # TODO: USE AWS SECRET
-    webhook = os.getenv("WEBHOOK", "")
+    webhook = json.loads(get_secret('msg/discord'))['webhook']
 
     if start is not None and end is not None:
         logger.info(f"Using custom range {start} to {end}")
