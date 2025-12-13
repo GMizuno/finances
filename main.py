@@ -79,6 +79,7 @@ def main(event, context) -> dict:
             sys.exit(1)
 
     try:
+        logger.info("Sending Discord msg")
         send_discord(parser_sucess_msg(tickets, start, end), webhook)
     except Exception as e:
         logger.error(f"Error on send Discord msg {tickets}: {e}")
