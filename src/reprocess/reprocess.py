@@ -1,8 +1,6 @@
 from main import main
 import os
 
-from src.util.const import SELECT_TICKET
-
 if __name__ == "__main__":
     event = None
     context = None

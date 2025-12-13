@@ -80,6 +80,8 @@ def main(event, context) -> dict:
 
     try:
         logger.info("Sending Discord msg")
+        start = data["Date"].min().date()
+        end = data["Date"].max().date()
         send_discord(parser_sucess_msg(tickets, start, end), webhook)
     except Exception as e:
         logger.error(f"Error on send Discord msg {tickets}: {e}")
