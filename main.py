@@ -13,7 +13,6 @@ from src.util.secret import get_secret
 load_dotenv()
 
 
-
 def main(event, context) -> dict:
     logger.info(f"Starting the process with event {event} and context {context}")
 
