@@ -18,5 +18,4 @@ def get_secret(secret_name: str, region_name: str = "us-east-2"):
 
     return  get_secret_value_response['SecretString']
 
-import json
 
