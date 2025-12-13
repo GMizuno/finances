@@ -78,6 +78,14 @@ resource "aws_iam_policy" "lambda_iceberg_policy" {
         "Resource" : "*"
       },
       {
+        "Sid" : "SecretAcess",
+        "Effect" : "Allow",
+        "Action" : [
+          "secretsmanager:GetSecretValue"
+        ],
+        "Resource" : "*"
+      },
+      {
         "Sid" : "S3AthenaResults",
         "Effect" : "Allow",
         "Action" : [

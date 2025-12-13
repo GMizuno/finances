@@ -62,8 +62,8 @@ def main(event, context) -> dict:
         data["Ticket"] = ticket
         try:
             logger.info(f"Writing to Athena table {ticket}")
-            # TODO: PASS AS PARAMETRE
 
+            # TODO: PASS AS PARAMETRE
             wr.config.s3_output = "s3://aws-athena-query-results-605771322130-us-east-2/"
 
             wr.athena.to_iceberg(
