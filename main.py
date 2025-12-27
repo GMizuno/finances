@@ -10,6 +10,12 @@ from src.util.requester import get_data
 from src.util.log import logger
 from src.util.secret import get_secret
 
+from src.util.send_mom_return import (
+    render_mom_return_template,
+    QUERY_MONTHLY_RETURN,
+    TICKETS_MONTHLY_RETURN
+)
+
 load_dotenv()
 
 
@@ -83,6 +89,11 @@ def main(event, context) -> dict:
         start = data["Date"].min().date()
         end = data["Date"].max().date()
         send_discord(parser_sucess_msg(tickets, start, end), webhook)
+
+        logger.info("Sending Monthly return msg")
+
+        monthly_return_msg = render_mom_return_template(QUERY_MONTHLY_RETURN, TICKETS_MONTHLY_RETURN)
+        send_discord(monthly_return_msg, webhook)
     except Exception as e:
         logger.error(f"Error on send Discord msg {tickets}: {e}")
 

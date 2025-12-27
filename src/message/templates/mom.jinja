@@ -1,7 +1,7 @@
 {% for financial_result in financials_result %}
 {% if financial_result.return_pct > 0 -%}
-**Ticket {{ financial_result.Ticket }}** ( {{ financial_result.year_month }} ): {{ "{:.4f}%".format(financial_result.return_pct) }} 🟢
+**Ticket {{ financial_result.ticket }}** ( {{ financial_result.last_operation_date }} ): {{ "{:.3f}%".format(financial_result.return_pct) }} 🟢
 {% else -%}
-**Ticket {{ financial_result.Ticket }}** ( {{ financial_result.year_month }} ): {{ "{:.4f}%".format(financial_result.return_pct) }} 🔴
+**Ticket {{ financial_result.ticket }}** ( {{ financial_result.last_operation_date }} ): {{ "{:.3f}%".format(financial_result.return_pct) }} 🔴
 {% endif -%}
 {% endfor %}
