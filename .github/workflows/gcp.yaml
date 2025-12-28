@@ -29,7 +29,5 @@ jobs:
         uses: hashicorp/setup-terraform@v3
       - name: Terraform Init
         run: terraform init
-      - name: Terraform Plan
-        run: terraform plan -out=tfplan.out
-      - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan.out
+      - name: Terraform Destroy
+        run: terraform terraform destroy -auto-approve
