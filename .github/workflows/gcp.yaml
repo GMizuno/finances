@@ -2,7 +2,7 @@ name: Deploy Financial Pipeline
 on:
   push:
     branches:
-      - 'feature/gcp'
+      - 'main'
 
 env:
   PROJECT_ID: cartola-360814
