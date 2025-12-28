@@ -1,22 +1,20 @@
-import pendulum
-import awswrangler as wr
 import os
-from dotenv import load_dotenv
-import json
 import sys
+import json
 
-from src.message.discord import parser_sucess_msg, send_discord
-from src.util.requester import get_data
+from dotenv import load_dotenv
 from src.util.log import logger
 from src.util.secret import get_secret
-
-from src.util.send_mom_return import (
-    render_mom_return_template,
-    QUERY_MONTHLY_RETURN,
-    TICKETS_MONTHLY_RETURN
-)
+from src.util.bigquery import get_bigquery_client, truncate_and_insert
+from src.util.requester import get_data
+from src.message.discord import send_discord, parser_sucess_msg
+from src.util.send_mom_return import QUERY_MONTHLY_RETURN, TICKETS_MONTHLY_RETURN, render_mom_return_template
+import pendulum
+import awswrangler as wr
 
 load_dotenv()
+
+wr.config.s3_output = "s3://aws-athena-query-results-605771322130-us-east-2/"
 
 
 def main(event, context) -> dict:
@@ -25,7 +23,7 @@ def main(event, context) -> dict:
     tickets = os.getenv("TICKETS").split(",")
     start = os.getenv("START", None)
     end = os.getenv("END", None)
-    webhook = json.loads(get_secret('msg/discord'))['webhook']
+    webhook = json.loads(get_secret("msg/discord"))["webhook"]
 
     if start is not None and end is not None:
         logger.info(f"Using custom range {start} to {end}")
@@ -39,12 +37,12 @@ def main(event, context) -> dict:
 
         data = get_data(ticket, start, end)
 
-        logger.success(f"Extract from Yahoo Finance")
+        logger.success("Extract from Yahoo Finance")
 
         data["Date"] = data["Date"].dt.tz_convert("UTC").dt.tz_localize(None)
         data.rename(columns={"Stock Splits": "Stock_Splits"}, inplace=True)
 
-        logger.success(f"Cleaning columns")
+        logger.success("Cleaning columns")
 
         # TODO: MOVE AS CONST
         required_columns = [
@@ -68,9 +66,6 @@ def main(event, context) -> dict:
         try:
             logger.info(f"Writing to Athena table {ticket}")
 
-            # TODO: PASS AS PARAMETRE
-            wr.config.s3_output = "s3://aws-athena-query-results-605771322130-us-east-2/"
-
             wr.athena.to_iceberg(
                 df=data,
                 database="corretagem",
@@ -82,6 +77,16 @@ def main(event, context) -> dict:
             logger.success(f"Finished processing {ticket}")
         except Exception as e:
             logger.error(f"Athena write error for ticket {ticket}: {e}")
+            sys.exit(1)
+
+        try:
+            logger.info(f"Writing to BigQuery table {ticket}")
+            biqquey_client = get_bigquery_client()
+            data_bigquery = data[["Date", "Open", "Close", "Ticket"]]
+            truncate_and_insert(biqquey_client, ticket, data_bigquery, "finances", "finance_raw")
+            logger.success(f"Finished sending {ticket} to BigQuery")
+        except Exception as e:
+            logger.error(f"BigQuery write error for ticket {ticket}: {e}")
             sys.exit(1)
 
     try:
@@ -98,7 +103,4 @@ def main(event, context) -> dict:
         logger.error(f"Error on send Discord msg {tickets}: {e}")
 
     logger.success("Finished processing all tickets.")
-    return {
-        'statusCode': 200,
-        'body': json.dumps("Finished processing all tickets.")
-    }
+    return {"statusCode": 200, "body": json.dumps("Finished processing all tickets.")}
