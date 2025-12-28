@@ -1,6 +1,8 @@
 terraform {
-  backend "gcs" {
-    bucket = "gcp-finance"
-    prefix = "function"
+  backend "s3" {
+    bucket  = "terraform-state-mizuno"
+    key     = "terraform-finance.tfstate"
+    region  = "us-east-2"
+    encrypt = true
   }
 }

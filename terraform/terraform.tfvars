@@ -1,2 +1,2 @@
-bucket_name = "finance_mizuno"
-cron = "0 19 * * 1-5"
+region  = "us-east-2"
+tickets = "B5P211.SA,SPXB11.SA,IRFM11.SA,DEBB11.SA,IB5M11.SA,BRL=X,NCIQ,BIL"

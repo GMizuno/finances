@@ -1,0 +1,31 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+      - aws
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-ecs:
+    name: 'Deploy ECS'
+    uses: ./.github/workflows/ecs.yml
+    with:
+      aws-assume-role-arn: "arn:aws:iam::605771322130:role/Github_Pipe"
+      aws-region: "us-east-2"
+      ecr-repository: "teste_mizuno"
+      image_tag: "v1.0.${{ github.run_number }}"
+
+  terraform:
+    name: 'Terraform'
+    needs: deploy-ecs
+    uses: ./.github/workflows/terraform.yml
+    with:
+      aws-assume-role-arn: "arn:aws:iam::605771322130:role/Github_Pipe"
+      aws-region: "us-east-2"
+      environment: "production"
+      image_uri: "v1.0.${{ github.run_number }}"
+

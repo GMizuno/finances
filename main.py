@@ -1,50 +1,106 @@
-from loguru import logger
+import os
+import sys
+import json
 
-import functions_framework
+from dotenv import load_dotenv
+from src.util.log import logger
+from src.util.secret import get_secret
+from src.util.bigquery import get_bigquery_client, truncate_and_insert
+from src.util.requester import get_data
+from src.message.discord import send_discord, parser_sucess_msg
+from src.util.send_mom_return import QUERY_MONTHLY_RETURN, TICKETS_MONTHLY_RETURN, render_mom_return_template
 import pendulum
+import awswrangler as wr
 
-from bigquery.bigquery import run_query
-from message.discord import parser_fail_msg, parser_sucess_msg, send_discord
-from message.render_jinja import month_over_month
-from util.const import PROJECT, QUERY, SELECT_TICKET, TABLE
-from util.transformation import etl
+load_dotenv()
+
+wr.config.s3_output = "s3://aws-athena-query-results-605771322130-us-east-2/"
 
 
-@functions_framework.http
-def main(request):
-    request_json = request.get_json(silent=True)
-    tickets = request_json.get("tickets")
-    start = request_json.get("start")
-    end = request_json.get("end")
+def main(event, context) -> dict:
+    logger.info(f"Starting the process with event {event} and context {context}")
 
-    logger.info(f"Extraindo dados dos seguintes ativos {tickets}")
+    tickets = os.getenv("TICKETS").split(",")
+    start = os.getenv("START", None)
+    end = os.getenv("END", None)
+    webhook = json.loads(get_secret("msg/discord"))["webhook"]
 
-    if start is None:
-        start = pendulum.today().subtract(days=1).to_date_string()
-        end = pendulum.tomorrow().to_date_string()
+    if start is not None and end is not None:
+        logger.info(f"Using custom range {start} to {end}")
+        start = pendulum.today().subtract(days=30).to_date_string()
+        end = pendulum.today().subtract(days=0).to_date_string()
 
-    logger.info(f"Extracting data from {start} to {end}")
+    logger.info(f"Extracting these {tickets} from range {start} to {end}")
 
     for ticket in tickets:
+        logger.info(f"Starting processing {ticket}")
+
+        data = get_data(ticket, start, end)
+
+        logger.success("Extract from Yahoo Finance")
+
+        data["Date"] = data["Date"].dt.tz_convert("UTC").dt.tz_localize(None)
+        data.rename(columns={"Stock Splits": "Stock_Splits"}, inplace=True)
+
+        logger.success("Cleaning columns")
+
+        # TODO: MOVE AS CONST
+        required_columns = [
+            "Date",
+            "Open",
+            "High",
+            "Low",
+            "Close",
+            "Volume",
+            "Dividends",
+        ]
+        missing_columns = [col for col in required_columns if col not in data.columns]
+
+        logger.info(f"Selected columns: {required_columns}")
+        if missing_columns:
+            logger.error(f"Missing columns for ticket {ticket}: {missing_columns}")
+            continue
+
+        data = data[required_columns]
+        data["Ticket"] = ticket
         try:
-            etl(ticket, start, end)
+            logger.info(f"Writing to Athena table {ticket}")
+
+            wr.athena.to_iceberg(
+                df=data,
+                database="corretagem",
+                table="stock_data",
+                temp_path="s3://finance-605771322130/temp/",
+                table_location="s3://finance-605771322130/raw/stock_data/",
+                keep_files=False,
+            )
+            logger.success(f"Finished processing {ticket}")
         except Exception as e:
-            msg = parser_fail_msg(str(e), ticket)
-            send_discord(msg)
-            logger.error(f"Error ao inserir na tabela {TABLE}.\n{e}")
+            logger.error(f"Athena write error for ticket {ticket}: {e}")
+            sys.exit(1)
 
-    data_month_over_month = run_query(QUERY, PROJECT)
-    data_month_over_month = data_month_over_month[
-        data_month_over_month["Ticket"].isin(SELECT_TICKET)
-    ]
+        try:
+            logger.info(f"Writing to BigQuery table {ticket}")
+            biqquey_client = get_bigquery_client()
+            data_bigquery = data[["Date", "Open", "Close", "Ticket"]]
+            truncate_and_insert(biqquey_client, ticket, data_bigquery, "finances", "finance_raw")
+            logger.success(f"Finished sending {ticket} to BigQuery")
+        except Exception as e:
+            logger.error(f"BigQuery write error for ticket {ticket}: {e}")
+            sys.exit(1)
 
-    msg = parser_sucess_msg(tickets, start, end)
-    msg_month_over_month = month_over_month(
-        data_month_over_month.to_dict(orient="records")
-    )
+    try:
+        logger.info("Sending Discord msg")
+        start = data["Date"].min().date()
+        end = data["Date"].max().date()
+        send_discord(parser_sucess_msg(tickets, start, end), webhook)
 
-    send_discord(msg)
-    logger.info("Sending message with month over the month returns")
-    send_discord(msg_month_over_month)
+        logger.info("Sending Monthly return msg")
 
-    return ""
+        monthly_return_msg = render_mom_return_template(QUERY_MONTHLY_RETURN, TICKETS_MONTHLY_RETURN)
+        send_discord(monthly_return_msg, webhook)
+    except Exception as e:
+        logger.error(f"Error on send Discord msg {tickets}: {e}")
+
+    logger.success("Finished processing all tickets.")
+    return {"statusCode": 200, "body": json.dumps("Finished processing all tickets.")}

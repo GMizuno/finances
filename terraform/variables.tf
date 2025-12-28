@@ -1,40 +1,22 @@
-variable "bucket_name" {
-  type = string
-}
-
-variable "project_id" {
-  type    = string
-  default = "cartola-360814"
-}
-
-
 variable "region" {
-  type    = string
-  default = "us-east1"
+  type        = string                     # The type of the variable, in this case a string
+  default     = "us-east-2"                # Default value for the variable
 }
 
-
-variable "service_account" {
-  type    = string
-  default = "functions-cartola@cartola-360814.iam.gserviceaccount.com"
+variable "webhook_discord" {
+  type        = string
+  description = "A URL do webhook recebida via GitHub Secrets"
 }
 
-
-variable "config_file_path" {
-  type    = string
-  default = "config.json"
-}
-
-variable "cron" {
+variable "tickets" {
   type = string
 }
 
-variable "time_zone" {
+variable "ecr_repo_url" {
   type    = string
-  default = "America/Sao_Paulo"
+  default = "605771322130.dkr.ecr.us-east-2.amazonaws.com/teste_mizuno"
 }
 
-variable "repository" {
-  type    = string
-  default = "gcf-artifacts"
+variable "image_tag" {
+  type = string
 }

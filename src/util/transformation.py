@@ -1,11 +1,11 @@
 import pandas as pd
 from pandas_gbq import to_gbq
 
-from bigquery import delete_row_based_date_and_ticket
+from src.bigquery import delete_row_based_date_and_ticket
 from loguru import logger
 
-from util.const import PROJECT, TABLE
-from util.requester import get_data
+from src.util.const import PROJECT, TABLE
+from src.util.requester import get_data
 
 pd.options.mode.chained_assignment = None
 

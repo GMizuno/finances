@@ -2,8 +2,10 @@ import sys
 
 from loguru import logger
 
+logger.remove()
+
 logger.add(
-    sys.stderr,
+    sys.stdout,
     format=(
         "[<blue>{time:MMMM D, YYYY -> HH:mm:ss}</blue>] >> "
         "<level>{level: <8}</level>: "
