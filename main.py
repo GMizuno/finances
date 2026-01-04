@@ -3,7 +3,7 @@ import sys
 import json
 
 from dotenv import load_dotenv
-from src.util.log import logger
+from src.util.log import logger, metrics
 from src.util.secret import get_secret
 from src.util.bigquery import get_bigquery_client, truncate_and_insert
 from src.util.requester import get_data
@@ -24,6 +24,7 @@ def main(event, context) -> dict:
     start = os.getenv("START", None)
     end = os.getenv("END", None)
     webhook = json.loads(get_secret("msg/discord"))["webhook"]
+    metrics.add_dimension(name="data_type", value=data_type)
 
     if start is not None and end is not None:
         logger.info(f"Using custom range {start} to {end}")
@@ -34,8 +35,12 @@ def main(event, context) -> dict:
 
     for ticket in tickets:
         logger.info(f"Starting processing {ticket}")
+        metrics.add_dimension(name="ticket", value=ticket)
 
         data = get_data(ticket, start, end)
+
+        metrics.add_metric(name="ProcessedRecords", unit="Count", value=len(data))
+        metrics.add_metric(name="ProcessedColumns", unit="Count", value=len(data.columns))
 
         logger.success("Extract from Yahoo Finance")
 
@@ -59,6 +64,7 @@ def main(event, context) -> dict:
         logger.info(f"Selected columns: {required_columns}")
         if missing_columns:
             logger.error(f"Missing columns for ticket {ticket}: {missing_columns}")
+            metrics.add_metric(name="ErrorCount", unit="Count", value=1)
             continue
 
         data = data[required_columns]
@@ -77,6 +83,7 @@ def main(event, context) -> dict:
             logger.success(f"Finished processing {ticket}")
         except Exception as e:
             logger.error(f"Athena write error for ticket {ticket}: {e}")
+            metrics.add_metric(name="ErrorCount", unit="Count", value=1)
             sys.exit(1)
 
         try:
@@ -87,6 +94,7 @@ def main(event, context) -> dict:
             logger.success(f"Finished sending {ticket} to BigQuery")
         except Exception as e:
             logger.error(f"BigQuery write error for ticket {ticket}: {e}")
+            metrics.add_metric(name="ErrorCount", unit="Count", value=1)
             sys.exit(1)
 
     try:
@@ -100,7 +108,9 @@ def main(event, context) -> dict:
         monthly_return_msg = render_mom_return_template(QUERY_MONTHLY_RETURN, TICKETS_MONTHLY_RETURN)
         send_discord(monthly_return_msg, webhook)
     except Exception as e:
+        metrics.add_metric(name="ErrorCount", unit="Count", value=1)
         logger.error(f"Error on send Discord msg {tickets}: {e}")
 
     logger.success("Finished processing all tickets.")
+    metrics.add_metric(name="SucessCount", unit="Count", value=1)
     return {"statusCode": 200, "body": json.dumps("Finished processing all tickets.")}

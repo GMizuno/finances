@@ -7,5 +7,4 @@ def get_data(ticket: str, start: str, end: str) -> "pd.DataFrame":
     return yf.Ticker(ticket).history(start=start, end=end).reset_index()
 
 
-
-
+x = get_data("B5P211.SA", None, None)

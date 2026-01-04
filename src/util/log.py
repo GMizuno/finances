@@ -1,11 +1,13 @@
-import sys
+import os
 
-from loguru import logger
+from aws_lambda_powertools import Logger, Metrics
 
-logger.remove()
+env = os.getenv("ENV", "local")
 
-logger.add(
-    sys.stdout,
-    format=("[<blue>{time:MMMM D, YYYY -> HH:mm:ss}</blue>] >> <level>{level: <8}</level>: <level>{message}</level>"),
-    colorize=True,
-)
+if env.lower() == "local":
+    os.environ["POWERTOOLS_DEV"] = "1"
+    logger = Logger(service="DataExtractionLocal")
+    metrics = Metrics(namespace="Football", service="DataExtractionLocal")
+else:
+    logger = Logger(service="DataExtraction")
+    metrics = Metrics(namespace="Football", service="DataExtraction")
