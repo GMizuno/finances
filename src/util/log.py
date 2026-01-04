@@ -2,7 +2,7 @@ import os
 
 from aws_lambda_powertools import Logger, Metrics
 
-env = os.getenv("ENV", "local")
+env = os.getenv("ENVIROMENTS", "local")
 
 if env.lower() == "local":
     os.environ["POWERTOOLS_DEV"] = "1"
