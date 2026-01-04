@@ -41,12 +41,12 @@ def main(event, context) -> dict:
         metrics.add_metric(name="ProcessedRecords", unit="Count", value=len(data))
         metrics.add_metric(name="ProcessedColumns", unit="Count", value=len(data.columns))
 
-        logger.success("Extract from Yahoo Finance")
+        logger.info("Extract from Yahoo Finance")
 
         data["Date"] = data["Date"].dt.tz_convert("UTC").dt.tz_localize(None)
         data.rename(columns={"Stock Splits": "Stock_Splits"}, inplace=True)
 
-        logger.success("Cleaning columns")
+        logger.info("Cleaning columns")
 
         # TODO: MOVE AS CONST
         required_columns = [
@@ -79,7 +79,7 @@ def main(event, context) -> dict:
                 table_location="s3://finance-605771322130/raw/stock_data/",
                 keep_files=False,
             )
-            logger.success(f"Finished processing {ticket}")
+            logger.info(f"Finished processing {ticket}")
         except Exception as e:
             logger.error(f"Athena write error for ticket {ticket}: {e}")
             metrics.add_metric(name="ErrorCount", unit="Count", value=1)
@@ -90,7 +90,7 @@ def main(event, context) -> dict:
             biqquey_client = get_bigquery_client()
             data_bigquery = data[["Date", "Open", "Close", "Ticket"]]
             truncate_and_insert(biqquey_client, ticket, data_bigquery, "finances", "finance_raw")
-            logger.success(f"Finished sending {ticket} to BigQuery")
+            logger.info(f"Finished sending {ticket} to BigQuery")
         except Exception as e:
             logger.error(f"BigQuery write error for ticket {ticket}: {e}")
             metrics.add_metric(name="ErrorCount", unit="Count", value=1)
@@ -110,6 +110,6 @@ def main(event, context) -> dict:
         metrics.add_metric(name="ErrorCount", unit="Count", value=1)
         logger.error(f"Error on send Discord msg {tickets}: {e}")
 
-    logger.success("Finished processing all tickets.")
+    logger.info("Finished processing all tickets.")
     metrics.add_metric(name="SucessCount", unit="Count", value=1)
     return {"statusCode": 200, "body": json.dumps("Finished processing all tickets.")}
