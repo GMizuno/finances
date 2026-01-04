@@ -91,7 +91,7 @@ def main(event: dict, context) -> dict:
             biqquey_client = get_bigquery_client()
             data_bigquery = data[["Date", "Open", "Close", "Ticket"]]
             truncate_and_insert(biqquey_client, ticket, data_bigquery, "finances", "finance_raw")
-            sleep(1)
+            sleep(3)
             logger.info(f"Finished sending {ticket} to BigQuery")
         except Exception as e:
             logger.error(f"BigQuery write error for ticket {ticket}: {e}")
