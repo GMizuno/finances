@@ -18,9 +18,9 @@ load_dotenv()
 wr.config.s3_output = "s3://aws-athena-query-results-605771322130-us-east-2/"
 
 
-def main(event, context) -> dict:
-    logger.info(f"Starting the process with event {event} and context {context}")
-
+@metrics.log_metrics(capture_cold_start_metric=True)
+@logger.inject_lambda_context(log_event=True)
+def main(event: dict, context) -> dict:
     tickets = os.getenv("TICKETS").split(",")
     start = os.getenv("START", None)
     end = os.getenv("END", None)
