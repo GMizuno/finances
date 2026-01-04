@@ -24,7 +24,6 @@ def main(event, context) -> dict:
     start = os.getenv("START", None)
     end = os.getenv("END", None)
     webhook = json.loads(get_secret("msg/discord"))["webhook"]
-    metrics.add_dimension(name="data_type", value=data_type)
 
     if start is not None and end is not None:
         logger.info(f"Using custom range {start} to {end}")
