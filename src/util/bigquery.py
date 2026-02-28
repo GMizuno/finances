@@ -20,6 +20,9 @@ def get_bigquery_client(secret_name: str = "glue/bigquery") -> bigquery.Client:
     credentials_json = get_secret(secret_name)
     credentials_dict = json.loads(credentials_json)
 
+    print(f"Using {credentials_dict['client_email']}")
+    print(f"Project ID: {credentials_dict.get('project_id')}")
+
     credentials = service_account.Credentials.from_service_account_info(credentials_dict)
     client = bigquery.Client(credentials=credentials, project=credentials_dict.get("project_id"))
 
