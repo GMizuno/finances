@@ -24,7 +24,7 @@ def main(event: dict, context) -> dict:
     tickets = os.getenv("TICKETS").split(",")
     start = os.getenv("START", None)
     end = os.getenv("END", None)
-    webhook = json.loads(get_secret("msg/discord"))["webhook"]
+    webhook = json.loads(get_secret("msg/discord_new"))["webhook"]
 
     if start is not None and end is not None:
         logger.info(f"Using custom range {start} to {end}")
